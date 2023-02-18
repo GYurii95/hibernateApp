@@ -1,6 +1,7 @@
 package ru.gyurii.springcourse.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.Cascade;
 
 @Entity
 @Table(name = "Person")
@@ -13,6 +14,9 @@ public class Person {
     private String name;
     @Column(name = "age")
     private int age;
+    @OneToOne(mappedBy = "person")
+    @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+    private Passport passport;
 
     public Person(){
 
@@ -47,8 +51,22 @@ public class Person {
         this.age = age;
     }
 
+    public Passport getPassport() {
+        return passport;
+    }
+
+    public void setPassport(Passport passport) {
+        this.passport = passport;
+        passport.setPerson(this);
+    }
+
     @Override
     public String toString() {
-        return "People name: " + name + ", age: " + age;
+        return "Person{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", age=" + age +
+                ", passport=" + passport +
+                '}';
     }
 }
