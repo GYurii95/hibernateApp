@@ -3,8 +3,12 @@ package ru.gyurii.springcourse;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import ru.gyurii.springcourse.model.Passport;
-import ru.gyurii.springcourse.model.Person;
+import ru.gyurii.springcourse.model.Actor;
+import ru.gyurii.springcourse.model.Movie;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Hello world!
@@ -15,27 +19,24 @@ public class App
     public static void main( String[] args )
     {
         Configuration configuration = new Configuration()
-                .addAnnotatedClass(Person.class)
-                .addAnnotatedClass(Passport.class);
+                .addAnnotatedClass(Actor.class)
+                .addAnnotatedClass(Movie.class);
         SessionFactory sessionFactory = configuration.buildSessionFactory();
 
         Session session = sessionFactory.getCurrentSession();
 
-        try {
+        try(sessionFactory) {
             session.beginTransaction();
 
-            Person person = new Person("User1", 30);
-            Passport passport = new Passport(123);
+            Actor actor = session.get(Actor.class, 2);
+            System.out.println(actor.getMovies());
 
-            person.setPassport(passport);
+            Movie movieToRemove = actor.getMovies().get(0);
 
-            session.save(person);
+            actor.getMovies().remove(movieToRemove);
+            movieToRemove.getActors().remove(actor);
 
             session.getTransaction().commit();
-        }
-
-        finally {
-            sessionFactory.close();
         }
     }
 }
